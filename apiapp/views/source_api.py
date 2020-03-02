@@ -15,7 +15,7 @@ blue = Blueprint('file_api', __name__)
 @blue.route('/home_source/', methods=['GET'])
 def article_img():
 
-    ret1 = session.query(FirstSentence).all()
+    ret1 = session.query(FirstSentence).all()  #从数据库获取
     if ret1:
 
         return jsonify({
