@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, Float, ForeignKey, Integer, MetaData, String, Text, VARBINARY
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, MetaData, String, Text, VARBINARY
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.mysql.types import BIT, LONGBLOB
 from sqlalchemy.schema import FetchedValue
@@ -125,11 +125,42 @@ class Comment(Base):
 
 
 
+class DjangoContentType(Base):
+    __tablename__ = 'django_content_type'
+    __table_args__ = (
+        Index('django_content_type_app_label_model_76bd3d3b_uniq', 'app_label', 'model'),
+    )
+
+    id = Column(Integer, primary_key=True)
+    app_label = Column(String(100), nullable=False)
+    model = Column(String(100), nullable=False)
+
+
+
+class DjangoMigration(Base):
+    __tablename__ = 'django_migrations'
+
+    id = Column(Integer, primary_key=True)
+    app = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
+    applied = Column(DateTime, nullable=False)
+
+
+
+class DjangoSession(Base):
+    __tablename__ = 'django_session'
+
+    session_key = Column(String(40), primary_key=True)
+    session_data = Column(String, nullable=False)
+    expire_date = Column(DateTime, nullable=False, index=True)
+
+
+
 class FirstImage(Base):
     __tablename__ = 'first_images'
 
     img_id = Column(Integer, primary_key=True)
-    link = Column(String(50))
+    link = Column(Text)
     image = Column(LONGBLOB)
 
 
@@ -140,6 +171,7 @@ class FirstSentence(Base):
     s_id = Column(Integer, primary_key=True)
     img_id = Column(ForeignKey('first_images.img_id', ondelete='RESTRICT', onupdate='RESTRICT'), index=True)
     sentence = Column(Text)
+    img_link = Column(Text)
 
     img = relationship('FirstImage', primaryjoin='FirstSentence.img_id == FirstImage.img_id', backref='first_sentences')
 
@@ -267,6 +299,26 @@ class TSlidesshow(Base):
     number = Column(Integer)
     image = Column(LONGBLOB)
     link = Column(String(100))
+
+
+
+class TSysRole(Base):
+    __tablename__ = 't_sys_role'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20), nullable=False, unique=True)
+    code = Column(String(10), unique=True)
+
+
+
+class TSysUser(Base):
+    __tablename__ = 't_sys_user'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(20), nullable=False, unique=True)
+    auth_string = Column(String(82), nullable=False)
+    nick_name = Column(String(20))
+    role_id = Column(Integer)
 
 
 
@@ -417,5 +469,5 @@ class User(Base):
     experience = Column(Integer, server_default=FetchedValue())
     usedays = Column(Integer)
     v_level = Column(Integer)
-    create_time = Column(String(20))
+    create_time = Column(String(50))
     isvip = Column(BIT(1))

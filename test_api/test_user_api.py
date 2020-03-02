@@ -58,3 +58,9 @@ class TestUserApi(TestCase):
         })
         resp_data = resp.json()
         print(resp_data)
+
+class TestSourceCase(TestCase):
+    def test_home_source(self):
+        url = base_url + '/source/home_source/'
+        resp = requests.get(url)
+        print(resp.json())
