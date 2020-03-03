@@ -9,14 +9,17 @@ base_url = f'http://{HOST}:{PORT}'
 data = {
     #'name':'liyusheng',
     'phone': '15706001062',
-    'token': "79fd44bf5da19b38682ce029031c7b28"
+    'token': "cf36519d72aa54d0778d8b196453bb86"
 }
 
 class TestUserApi(TestCase):
+    #获取验证码
     def test_a_send_code(self):
         url = base_url + f'/api/code/?phone={data["phone"]}'
         resp = requests.get(url)
         print(resp.json())
+
+    #用户注册
     def test_b_regist(self):
         url = base_url + '/api/regist/'
         resp = requests.post(url, json={
@@ -27,32 +30,36 @@ class TestUserApi(TestCase):
         })
         print(resp.json())
 
+    #用户登录
     def test_c_login(self):
         url = base_url + '/api/login/'
         resp = requests.post(url, json={
             'phone': data['phone'],
-            'pwd': '123456'
+            'pwd': '654321'
         })
         resp_data = resp.json()
         print(resp_data)
         if resp_data['state'] == 0:
             data['token'] = resp_data['token']
 
+
+    #用户修改密码
     def test_d_login(self):
         url = base_url + '/api/modify_auth/'
         resp = requests.post(url, json={
             'token': data['token'],
-            'pwd': '123456',
-            'new_pwd': '654321',
+            'pwd': '654321',
+            'new_pwd': '123456',
         })
         resp_data = resp.json()
         print(resp_data)
 
+    #用户发表文章
     def test_up_article(self):
         url = base_url + '/api/upload_article/'
         resp = requests.post(url, json={
             'token': data['token'],
-            'name': '夏天',
+            'name': '秋天',
             'details': '秋风用时光的旋律，用桂花的芬芳、苹果的馨香、菊花的灿烂、牵牛花的奔放、一串红的艳丽，'
                        '把一望无际的田野乡村，演绎得在自然中沉醉，渲染得天地间空旷而又阳刚。'
         })
@@ -60,7 +67,13 @@ class TestUserApi(TestCase):
         print(resp_data)
 
 class TestSourceCase(TestCase):
+    #首页资源展示
     def test_home_source(self):
-        url = base_url + '/source/home_source/'
+        url = base_url + '/api/home_source/'
+        resp = requests.get(url)
+        print(resp.json())
+
+    def test_user_article(self):
+        url = base_url + '/api/userarticle/'
         resp = requests.get(url)
         print(resp.json())
